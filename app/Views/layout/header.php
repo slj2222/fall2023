@@ -15,15 +15,69 @@
         <a href="#" class="logo">logo</a>
         <div class="navigation">
             <ul class="menu">
+                <div class="close-btn"></div>
                 <li class="menu-item"><a href="#">Home</a></li>
-                <li class="menu-item"><a href="#">Dropdown <i class="fas fa-angle-down"></i></a></li>
-                <li class="menu-item"><a href="#">With Sub-dropdown <i class="fas fa-angle-down"></i></a></li>
+                <li class="menu-item">
+                    <a class="sub-btn href="#">Dropdown <i class="fas fa-angle-down"></i></a>
+                    <ul class="sub-menu">
+                        <li class="sub-item"><a href="#">Sub Item 01</a></li>
+                        <li class="sub-item"><a href="#">Sub Item 02</a></li>
+                        <li class="sub-item"><a href="#">Sub Item 03</a></li>
+                    </ul>
+                </li>
+                <li class="menu-item">
+                    <a class="sub-btn" href="#">With Sub-dropdown <i class="fas fa-angle-down"></i></a>
+                    <ul class="sub-menu">
+                        <li class="sub-item"><a href="#">Sub Item 01</a></li>
+                        <li class="sub-item"><a href="#">Sub Item 02</a></li>
+                        <li class="sub-item"><a href="#">Sub Item 03</a></li>
+                        <li class="sub-item"><a href="#">Sub Item 04</a></li>
+                        <li class="sub-item more">
+                            <a class="more-btn" href="#">More Items<i class="fas fa-angle-right"></i></a>
+                            <ul class="more-menu">
+                                <li class="more-item"><a href="#">More Item 01</a></li>
+                                <li class="more-item"><a href="#">More Item 02</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
                 <li class="menu-item"><a href="#">Services</a></li>
                 <li class="menu-item"><a href="#">About</a></li>
                 <li class="menu-item"><a href="#">Contact</a></li>
             </ul>
         </div>
+        <div class="menu-btn"></div>
     </header>
+
+    <script type="text/javascript">
+        //jquery for toggle dropdown menus
+        $(document).ready(function(){
+            //toggle sub-menus
+            $(".sub-btn").click(function(){
+                $(this).next(".sub-menu").slideToggle();
+            })
+
+            //toggle more-menus
+            $(".more-btn").click(function(){
+                $(this).next(".more-menu").slideToggle();
+            })
+        });
+
+        //javascript for the responsive navigation menu
+        let menu = document.querySelector(".menu");
+        let menuBtn = document.querySelector(".menu-btn");
+        let closeBtn = document.querySelector(".close-btn");
+
+        menuBtn.addEventListener("click", () => {
+            menu.classList.add("active");
+        })
+
+        closeBtn.addEventListener("click", () => {
+            menu.classList.remove("active");
+        })
+
+
+    </script>
     
 <!-- </body>
 </html> -->
