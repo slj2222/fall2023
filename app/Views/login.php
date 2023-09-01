@@ -11,7 +11,7 @@
         <div class="row justify-content-md-center">
             <div class="col-5">
                 
-                <h2>Sign In</h2>
+                <h2>Log In</h2>
                 
                 <?php if(session()->getFlashdata('msg')):?>
                     <div class="alert alert-warning">

@@ -49,6 +49,10 @@
         <div class="menu-btn"></div>
     </header>
 
+    <section class="section-home">
+        <!-- <h1>Dropdowns.</h1> -->
+    <!-- </section> -->
+
     <script type="text/javascript">
         //jquery for toggle dropdown menus
         $(document).ready(function(){
