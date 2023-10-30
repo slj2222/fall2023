@@ -1,5 +1,6 @@
 <?php
 
+use App\Controllers\WorkoutController;
 use CodeIgniter\Router\RouteCollection;
 
 /**
@@ -12,6 +13,13 @@ use CodeIgniter\Router\RouteCollection;
  $routes->match(['get', 'post'], 'LoginController/loginAuth', 'LoginController::loginAuth');
  $routes->get('/login', 'LoginController::index');
  $routes->get('/profile', 'ProfileController::index',['filter' => 'authGuard']);
+// $routes->get('/workouts/plan', [WorkoutController::class, 'index']);
+
+//  $routes->get('/workouts/plan', 'WorkoutController::test');
+ $routes->get('/workouts/history', 'WorkoutController::myWorkoutsHistory');
+ $routes->get('/workouts/create', 'WorkoutController::createWorkout');
+ $routes->get('/workouts/continue', 'WorkoutController::getCurrentWorkoutDetails');
+//  $routes->
 
 
 

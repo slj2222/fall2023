@@ -16,7 +16,8 @@
         <div class="navigation">
             <ul class="menu">
                 <div class="close-btn"></div>
-                <li class="menu-item"><a href="#">Home</a></li>
+                <li class="menu-item"><a href="<?= base_url()?>profile">Home</a></li>
+                <li class="menu-item"><a href="<?= base_url()?>workouts/plan">Plan a Workout</a></li>
                 <li class="menu-item">
                     <a class="sub-btn href="#">Dropdown <i class="fas fa-angle-down"></i></a>
                     <ul class="sub-menu">
