@@ -37,8 +37,7 @@ class WorkoutModel extends Model{
             } 
         } else {
             return false;
-        }
-        
+        }  
     }
 
     public function completeWorkout($workoutData)
@@ -116,6 +115,7 @@ class WorkoutModel extends Model{
             );
 
             $results = $query->getResultArray();
+
             if ($results) {
                 return $results;
             } else {
@@ -124,8 +124,104 @@ class WorkoutModel extends Model{
         }
     }
     
+    public function addNewExercise($workoutData)
+    {
+        if ($workoutData) {
+            $userId = $workoutData['user_id'];
+            $workoutId = $workoutData['workout_id'];
+            $exercise_name = $workoutData['exercise_name'];
+
+            $query = $this->db->query(
+                'INSERT INTO exercises
+                    (exercise_name) 
+                VALUES 
+                    ("' . $exercise_name . '");'
+            );
+            echo $query;
+
+            $select = $this->db->query(
+                'SELECT * FROM exercises WHERE exercise_name = "' . $exercise_name . '";'
+            );
+            
+            $results = $select->getResultArray();
+
+            if ($results) {
+                echo json_encode($results);
+                return $results[0]['id'];
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }  
+    }
+
+    public function addNewSet($workoutData)
+    {
+        if ($workoutData) {
+            // $userId = $workoutData['user_id'];
+            $exercise_reps = $workoutData['exercise_reps'];
+            $exercise_weight = $workoutData['exercise_weight'];
+
+            //reps
+            //weight
+
+            $query = $this->db->query(
+                'INSERT INTO sets
+                    (reps, weight) 
+                VALUES 
+                    (' . $exercise_reps . ',' . $exercise_weight . ');'
+            );
+
+            $select = $this->db->query(
+                'SELECT * FROM sets 
+                WHERE reps = ' . $exercise_reps . ' 
+                    AND weight = ' . $exercise_weight . ';'
+            );
+            
+            $results = $select->getResultArray();
+
+            if ($results) {
+                return $results[0]['id'];
+            } else {
+                return false;
+            }
+
+            return true;
+        } else {
+            return false;
+        }  
+    }
     
-    
+    public function addNewExerciseSet($workoutData)
+    {
+        if ($workoutData) {
+            $userId = $workoutData['user_id'];
+            $workoutId = $workoutData['workout_id'];
+            $exercise_name = $workoutData['exercise_name'];
+
+            //exercise_id
+            //set_id
+
+            $this->db->transStart();
+
+            $exercise_id = $this->addNewExercise($workoutData);
+            $set_id = $this->addNewSet($workoutData);
+
+            $query = $this->db->query(
+                'INSERT INTO exercises_sets
+                    (exercise_id, set_id) 
+                VALUES 
+                    (' . $exercise_id . ',' . $set_id . ');'
+            );
+
+            $this->db->transComplete();
+
+            return true;
+        } else {
+            return false;
+        }  
+    }
     
     
     

@@ -19,6 +19,10 @@ use CodeIgniter\Router\RouteCollection;
  $routes->get('/workouts/history', 'WorkoutController::myWorkoutsHistory');
  $routes->get('/workouts/create', 'WorkoutController::createWorkout');
  $routes->get('/workouts/continue', 'WorkoutController::getCurrentWorkoutDetails');
+
+
+ $routes->post('/workouts/submitWorkoutExercise', 'WorkoutController::submitWorkoutExercise');
+ $routes->post('/workouts/submitWorkoutSet', 'WorkoutController::submitWorkoutSet');
 //  $routes->
 
 

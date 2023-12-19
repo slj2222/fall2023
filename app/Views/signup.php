@@ -32,7 +32,9 @@
                     <div class="d-grid">
                         <button type="submit" class="btn btn-dark">Signup</button>
                     </div>
+                   
                 </form>
+             
             </div>
         </div>
     </div>
