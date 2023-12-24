@@ -28,3 +28,9 @@ use CodeIgniter\Router\RouteCollection;
 
 
 
+
+$routes->cli('workoutController/populateExerciseDbFromApi', 'WorkoutController::populateExerciseDbFromApi');
+
+
+
+

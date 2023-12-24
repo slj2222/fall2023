@@ -1,11 +1,14 @@
 <?php 
 namespace App\Models;  
 use CodeIgniter\Model;
+use CodeIgniter\Database\Exceptions\DatabaseException;
+
   
 class WorkoutModel extends Model{
     public function __construct()
     {
         $this->db = \Config\Database::connect();
+        
 
     }
 
@@ -99,7 +102,8 @@ class WorkoutModel extends Model{
                     w.id,
                     w.workout_start_date,
                     w.workout_end_date,
-                    we.id AS workouts_exercisess_id,
+                    we.time_entered AS workouts_exercises_id_time_entered,
+                    we.id AS workouts_exercises_id,
                     es.id AS exercises_sets_id,
                     e.exercise_name,
                     s.id AS set_id,
@@ -111,7 +115,8 @@ class WorkoutModel extends Model{
                 JOIN exercises e ON es.exercise_id = e.id
                 JOIN sets s ON es.set_id = s.id
                 WHERE 
-                    w.id = ' . $workoutId . ';'
+                    w.id = ' . $workoutId . '
+                ORDER BY we.time_entered asc;'
             );
 
             $results = $query->getResultArray();
@@ -131,25 +136,34 @@ class WorkoutModel extends Model{
             $workoutId = $workoutData['workout_id'];
             $exercise_name = $workoutData['exercise_name'];
 
-            $query = $this->db->query(
-                'INSERT INTO exercises
-                    (exercise_name) 
-                VALUES 
-                    ("' . $exercise_name . '");'
-            );
-            echo $query;
-
-            $select = $this->db->query(
+            $exerciseAlreadyExists = $this->db->query(
                 'SELECT * FROM exercises WHERE exercise_name = "' . $exercise_name . '";'
             );
             
-            $results = $select->getResultArray();
+            $exerciseAlreadyExistsResults = $exerciseAlreadyExists->getResultArray();
 
-            if ($results) {
-                echo json_encode($results);
-                return $results[0]['id'];
+            if ($exerciseAlreadyExistsResults) {
+                return $exerciseAlreadyExistsResults[0]['id'];
             } else {
-                return false;
+                $query = $this->db->query(
+                    'INSERT INTO exercises
+                        (exercise_name) 
+                    VALUES 
+                        ("' . $exercise_name . '");'
+                );
+    
+                $select = $this->db->query(
+                    'SELECT * FROM exercises WHERE exercise_name = "' . $exercise_name . '";'
+                );
+                
+                $results = $select->getResultArray();
+    
+                if ($results) {
+                    echo json_encode($results);
+                    return $results[0]['id'];
+                } else {
+                    return false;
+                }            
             }
         } else {
             return false;
@@ -193,20 +207,17 @@ class WorkoutModel extends Model{
         }  
     }
     
-    public function addNewExerciseSet($workoutData)
+    public function addNewExercisesSet($workoutData)
     {
         if ($workoutData) {
             $userId = $workoutData['user_id'];
             $workoutId = $workoutData['workout_id'];
             $exercise_name = $workoutData['exercise_name'];
 
-            //exercise_id
-            //set_id
+            $exercise_id = $workoutData['exercise_id'];
+            $set_id = $workoutData['set_id'];
 
-            $this->db->transStart();
-
-            $exercise_id = $this->addNewExercise($workoutData);
-            $set_id = $this->addNewSet($workoutData);
+            
 
             $query = $this->db->query(
                 'INSERT INTO exercises_sets
@@ -215,7 +226,21 @@ class WorkoutModel extends Model{
                     (' . $exercise_id . ',' . $set_id . ');'
             );
 
-            $this->db->transComplete();
+            $select = $this->db->query(
+                'SELECT * FROM exercises_sets 
+                WHERE exercise_id = ' . $exercise_id . ' 
+                    AND set_id = ' . $set_id . ';'
+            );
+
+            $results = $select->getResultArray();
+
+            if ($results) {
+                return $results[0]['id'];
+            } else {
+                return false;
+            }
+
+
 
             return true;
         } else {
@@ -223,7 +248,46 @@ class WorkoutModel extends Model{
         }  
     }
     
-    
+    public function addNewWorkoutsExercises($workoutData)
+    {
+        if ($workoutData) {
+            // $userId = $workoutData['user_id'];
+            log_message('debug', json_encode($workoutData));
+            $exercise_set_id = $workoutData['exercise_reps'];
+            $workoutId = $workoutData['workout_id'];
+
+            try {
+          
+                $this->db->transException(true);
+                $this->db->transStart();
+
+
+                $exercise_id = $this->addNewExercise($workoutData);
+                $set_id = $this->addNewSet($workoutData);
+                $workoutData['exercise_id'] = $exercise_id;
+                $workoutData['set_id'] = $set_id;
+                $exercises_sets_id = $this->addNewExercisesSet($workoutData);
+
+                $query = $this->db->query(
+                    'INSERT INTO workouts_exercises
+                        (workout_id, exercises_sets_id) 
+                    VALUES 
+                        (' . $workoutId . ',' . $exercises_sets_id . ');'
+                );
+                $this->db->transComplete();
+                log_message("debug", "workoutData at the end: " . json_encode($workoutData));
+
+                return true;
+            } catch (DatabaseException $e) {
+                log_message('error', 'DB EXCEPTION' . $e);
+                return false;
+            }
+              
+            
+        } else {
+            return false;
+        }  
+    }
     
     
     
@@ -257,6 +321,76 @@ class WorkoutModel extends Model{
                 return $results;
             }
         }
+    }
+
+
+
+
+
+
+
+
+
+    public function workoutExistsInDb($exercise_name) {
+        
+        $exerciseAlreadyExists = $this->db->query(
+            'SELECT * FROM exercises WHERE exercise_name = "' . addslashes($exercise_name) . '";'
+        );
+
+        log_message('debug', 'SELECT * FROM exercises WHERE exercise_name = "' . addslashes($exercise_name) . '";');
+
+        $results = $exerciseAlreadyExists->getResultArray();
+
+        if ($results) {
+            log_message('debug', 'results from workoutExistsInDb: '. $exercise_name);
+            return true;
+        } else {
+            log_message('error', 'not found in db: ' . $exercise_name);
+            return false;
+        }
+    }
+
+    public function addExerciseToDb($exerciseData)
+    {
+        if ($exerciseData) {
+            
+            $exercise_name = addslashes($exerciseData['name']);
+            $exercise_type = $exerciseData['type'];
+            $muscle = $exerciseData['muscle'];
+            $equipment = $exerciseData['equipment'];
+            $difficulty = $exerciseData['difficulty'];
+            $instructions = addslashes($exerciseData['instructions']);
+
+            $query = $this->db->query(
+                'INSERT INTO exercises
+                    (exercise_name, type, muscle, equipment, difficulty, instructions) 
+                VALUES 
+                    (   "' . $exercise_name . '", 
+                        "' . $exercise_type . '",
+                        "' . $muscle . '",
+                        "' . $equipment . '",
+                        "' . $difficulty . '",
+                        "' . $instructions . '"
+                    );'
+            );
+
+            $select = $this->db->query(
+                'SELECT * FROM exercises WHERE exercise_name = "' . $exercise_name . '";'
+            );
+            
+            $results = $select->getResultArray();
+
+            if ($results) {
+                echo json_encode($results);
+                return true;
+                // return $results[0]['id'];
+            } else {
+                return false;
+            }            
+           
+        } else {
+            return false;
+        }  
     }
 }
 
