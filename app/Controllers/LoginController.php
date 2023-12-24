@@ -13,10 +13,11 @@ class LoginController extends Controller
   
     public function loginAuth()
     {
+        $request = \Config\Services::request();
         $session = session();
         $userModel = new UserModel();
-        $email = $this->request->getVar('email');
-        $password = $this->request->getVar('password');
+        $email = $request->getVar('email');
+        $password = $request->getVar('password');
         
         $data = $userModel->where('email', $email)->first();
         
@@ -39,7 +40,7 @@ class LoginController extends Controller
             }
         }else{
             $session->setFlashdata('msg', 'Email does not exist.');
-            return redirect()->to('/lognin');
+            return redirect()->to('/login');
         }
     }
 }

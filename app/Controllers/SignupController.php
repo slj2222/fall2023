@@ -22,12 +22,14 @@ class SignupController extends Controller
             'confirmpassword'  => 'matches[password]'
         ];
           
+        $request = \Config\Services::request();
+
         if($this->validate($rules)){
             $userModel = new UserModel();
             $data = [
-                'name'     => $this->request->getVar('name'),
-                'email'    => $this->request->getVar('email'),
-                'password' => password_hash($this->request->getVar('password'), PASSWORD_DEFAULT)
+                'name'     => $request->getVar('name'),
+                'email'    => $request->getVar('email'),
+                'password' => password_hash($request->getVar('password'), PASSWORD_DEFAULT)
             ];
             $userModel->save($data);
             return redirect()->to('/login');
