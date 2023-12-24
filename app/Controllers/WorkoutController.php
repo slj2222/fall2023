@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use CodeIgniter\Controller;
 use App\Models\WorkoutModel;
+require 'api_keys.php';
 
 // set_time_limit(300);
 
@@ -183,7 +184,7 @@ class WorkoutController extends Controller
             CURLOPT_CUSTOMREQUEST => "GET",
             CURLOPT_HTTPHEADER => [
                 "X-RapidAPI-Host: exercises-by-api-ninjas.p.rapidapi.com",
-		        "X-RapidAPI-Key: 7e072d9e51mshd2d764fe7eddea6p1776b5jsna4133f3db280"
+		        "X-RapidAPI-Key: "
             ],
         ]);
         
@@ -225,7 +226,7 @@ class WorkoutController extends Controller
             CURLOPT_CUSTOMREQUEST => "GET",
             CURLOPT_HTTPHEADER => [
                 "X-RapidAPI-Host: exercises-by-api-ninjas.p.rapidapi.com",
-		        "X-RapidAPI-Key: 7e072d9e51mshd2d764fe7eddea6p1776b5jsna4133f3db280"
+		        "X-RapidAPI-Key: "
             ],
         ]);
         
@@ -369,11 +370,11 @@ class WorkoutController extends Controller
             //option 1 :
             // CURLOPT_HTTPHEADER => [
             //     "X-RapidAPI-Host: exercises-by-api-ninjas.p.rapidapi.com",
-		    //     "X-RapidAPI-Key: 7e072d9e51mshd2d764fe7eddea6p1776b5jsna4133f3db280"
+		    //     "X-RapidAPI-Key: "
             // ],
             //option 2 :
             CURLOPT_HTTPHEADER => [
-		        "X-Api-Key: FshIaeDVuL9/eTpYn9eNkA==spmv4QBeydduZEUb"
+		        "X-Api-Key: "
             ],
         ]);
  
